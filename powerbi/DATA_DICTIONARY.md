@@ -11,7 +11,7 @@ BigQuery the datasets are `raw`, `analytics_staging`, `analytics_marts` (`GCP_RA
 |---|---|---|---|---|
 | raw | `raw.fidelity_trades` | `raw.fidelity_trades` | append-only landing, deduped on `row_hash` | no |
 | staging | `staging.stg_fidelity_trades` | `analytics_staging.stg_fidelity_trades` | normalized view: casts, USD conversion, contract parse, strategy label | optional |
-| marts | `marts.fct_*` | `analytics_marts.fct_*` | pre-aggregated activity (verified run: 869 wheel / 416 puts / 489 calls groups) | yes |
+| marts | `marts.fct_*` | `analytics_marts.fct_*` | pre-aggregated option activity, one row per business key per day | yes |
 
 Marts are incremental merge-upserts keyed on their grain, reconciled by dbt tests
 (`reconcile_pnl`, `reconcile_puts_pnl`, `reconcile_calls_pnl`).

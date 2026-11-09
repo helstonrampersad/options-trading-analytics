@@ -40,7 +40,8 @@ flowchart LR
   `row_hash = md5(account_label + stable payload + occurrence index)` with `cash_balance`
   excluded. Loads are insert-only.
 - **Staging** views cast numerics, convert amounts to USD, parse option contract codes, and
-  classify strategy; `stg_fidelity_trades` unions the per-account views.
+  classify strategy. `stg_fidelity_trades` is the canonical view (reads `raw` directly) and the
+  per-account views filter it by label.
 - **Marts** are incremental models merged on business keys with a 3-day lookback, partitioned
   by `run_date` on BigQuery.
 

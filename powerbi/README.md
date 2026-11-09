@@ -47,6 +47,9 @@ Pick one of the three installation routes:
 winget install --id Microsoft.PowerBI -e --accept-package-agreements --accept-source-agreements
 ```
 
+If your winget build does not recognise that ID, run `winget search "Power BI Desktop"` and
+install the Microsoft-published package that appears.
+
 **Option 2 — Microsoft Store:** open the Store, search for **"Power BI Desktop"**, and install
 the app published by Microsoft. The Store version updates itself automatically.
 

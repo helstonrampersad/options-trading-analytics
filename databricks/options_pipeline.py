@@ -116,7 +116,7 @@ print("DELTA_ROOT:", DELTA_ROOT)
 # MAGIC ## 2) Bronze — load & normalize the raw Fidelity trade CSVs
 # MAGIC
 # MAGIC Parsing rules mirror the Python side of the original pipeline:
-# MAGIC - Fidelity exports come in two header layouts (13-column “Price ($)” and 16-column legacy); a header row containing
+# MAGIC - Fidelity exports come in two header layouts (13-column “Price ($)” and 17-column legacy); a header row containing
 # MAGIC   `Run Date` is sniffed wherever it sits (files have a preamble), and dates like `M/D/YYYY` / `M-D-YYYY`
 # MAGIC   are normalized to ISO *before* hashing, so duplicates across export formats collapse.
 # MAGIC - Each normalized trade gets a content hash `row_hash = md5(account_label | field | …)`.
