@@ -1,0 +1,89 @@
+# ---------------------------------------------------------------------------
+# Secrets and local configuration - NEVER commit these
+# ---------------------------------------------------------------------------
+.env
+.env.*
+!.env.example
+# CI smoke-test env file created locally by the commands in .github/workflows/ci.yml
+ci.env
+
+# ---------------------------------------------------------------------------
+# Virtual environments
+# ---------------------------------------------------------------------------
+.venv/
+venv/
+env/
+
+# ---------------------------------------------------------------------------
+# Python caches and build output
+# ---------------------------------------------------------------------------
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+*.egg-info/
+build/
+dist/
+
+# ---------------------------------------------------------------------------
+# dbt artifacts
+# ---------------------------------------------------------------------------
+target/
+logs/
+dbt_packages/
+package-lock.yml
+*.user.yml
+
+# ---------------------------------------------------------------------------
+# Local data and warehouses (regenerable, may contain private trades)
+# ---------------------------------------------------------------------------
+data/raw/*
+!data/raw/.gitkeep
+data/exports/
+data/sample/
+data/sample.duckdb
+*.duckdb
+*.duckdb.wal
+*.db
+
+# ---------------------------------------------------------------------------
+# Real broker CSVs: real exports are named *History_for_Account_<number>.csv,
+# so ignore every CSV except the synthetic fixtures we ship on purpose.
+# ---------------------------------------------------------------------------
+*.csv
+!tests/fixtures/*.csv
+!powerbi/sample_data/*.csv
+
+# ---------------------------------------------------------------------------
+# Power BI binaries and exports (reports are rebuilt from scripts)
+# ---------------------------------------------------------------------------
+*.pbix
+*.pbit
+powerbi/exports/
+
+# ---------------------------------------------------------------------------
+# OS / editor cruft
+# ---------------------------------------------------------------------------
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# ---------------------------------------------------------------------------
+# Local Spark (pyspark notebook runs) and Airflow
+# ---------------------------------------------------------------------------
+spark-warehouse/
+metastore_db/
+derby.log
+airflow/logs/
+airflow/*.cfg
+airflow/*.db
+airflow/.venv/
+
+# ---------------------------------------------------------------------------
+# Logs and temporary files
+# ---------------------------------------------------------------------------
+*.log
+.~*
+*.tmp

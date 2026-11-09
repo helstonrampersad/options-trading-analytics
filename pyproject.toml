@@ -1,0 +1,29 @@
+[project]
+name = "options-trading-analytics"
+version = "1.0.0"
+description = "End-to-end options-trading analytics: Fidelity CSV ingest plus dbt models for BigQuery, DuckDB, and Databricks."
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "MIT" }
+# Runtime dependencies are intentionally NOT declared here; they are pinned in
+# requirements.txt / requirements-spark.txt so the repo stays installable without
+# a build backend. See those files for the full list.
+dependencies = []
+
+[tool.ruff]
+line-length = 120
+target-version = "py311"
+
+[tool.ruff.lint]
+# Conservative, safe set that the existing ingest/tests code already satisfies:
+# the pycodestyle error groups ruff enables by default (E4/E7/E9), pyflakes (F),
+# and pycodestyle warnings (W). Broader E1/E2/E3 checks are not enabled because
+# they would flag intentional fixture formatting (e.g. compact dict literals).
+select = ["E4", "E7", "E9", "F", "W"]
+# Long single-line synthetic CSV fixtures exceed 120 columns on purpose, and
+# W505 (doc line too long) is deliberately left off for the same reason.
+ignore = ["E501", "W505"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"

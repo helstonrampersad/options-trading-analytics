@@ -1,0 +1,23 @@
+version: 2
+
+sources:
+  - name: raw
+    database: "{{ env_var('GCP_PROJECT_ID') }}"
+    schema: "{{ env_var('GCP_RAW_DATASET', 'raw') }}"
+    tables:
+      - name: fidelity_trades
+        columns:
+          - name: row_hash
+            description: "Unique md5 of account_label + all normalized fields"
+            tests:
+              - unique
+              - not_null
+          - name: account_label
+            description: "Anonymized account label; never the real account number"
+            tests:
+              - not_null
+              - accepted_values:
+                  values: ["LLC_MAIN", "ROTH_IRA", "ROLLOVER_IRA", "INDIVIDUAL_LEGACY"]
+          - name: run_date
+            tests:
+              - not_null

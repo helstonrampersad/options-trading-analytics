@@ -1,0 +1,22 @@
+# Runtime dependencies, pinned exactly to the versions validated locally on
+# Python 3.11 (read from the .venv package metadata).
+# Refresh pins after an intentional upgrade: .venv/bin/python -m pip freeze
+
+# --- Local DuckDB warehouse (dbt_local) -----------------------------------
+duckdb==2.0.0
+dbt-duckdb==1.11.1
+
+# --- BigQuery warehouse (dbt_project) -------------------------------------
+google-cloud-bigquery==3.47.0
+dbt-bigquery==1.12.1
+
+# --- Databricks SQL warehouse (dbt_databricks) ----------------------------
+# dbt-databricks 1.13.0 requires dbt-core >=1.11.2,<1.12.7.
+dbt-databricks==1.13.0
+
+# --- dbt core runtime ------------------------------------------------------
+dbt-core==1.12.6
+
+# --- Configuration and tests ----------------------------------------------
+python-dotenv==1.2.4
+pytest==9.2.0

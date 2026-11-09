@@ -1,0 +1,7 @@
+# Optional: only needed to run databricks/options_pipeline.py outside Databricks.
+# The notebook loads Delta via Maven (io.delta:delta-spark_2.12:3.2.1), so the
+# runtime pins below match that Delta version (Spark 3.5 line).
+-r requirements.txt
+
+pyspark==3.5.4
+delta-spark==3.2.1

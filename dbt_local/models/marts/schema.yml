@@ -1,0 +1,49 @@
+version: 2
+
+models:
+  - name: fct_wheel_mechanics
+    columns:
+      - name: run_date
+        tests: [not_null]
+      - name: account_label
+        tests: [not_null]
+      - name: ticker
+        tests: [not_null]
+      - name: strategy
+        tests:
+          - accepted_values:
+              values: ["PLTR_wheel", "leap", "covered_call", "day_trade", "csp", "other"]
+      - name: net_pnl
+        description: "Realized option-premium P&L (Fidelity sign: credits positive); assignment cash excluded (stock leg) — use net_cash_flow for total cash."
+    tests:
+      - unique_combination_of_columns:
+          arguments:
+            combination_of_columns: [run_date, account_label, ticker, strategy]
+  - name: fct_cash_secured_puts
+    columns:
+      - name: run_date
+        tests: [not_null]
+      - name: account_label
+        tests: [not_null]
+      - name: ticker
+        tests: [not_null]
+      - name: net_pnl
+        description: "Realized option-premium P&L (Fidelity sign: credits positive); assignment cash excluded (stock leg) — use net_cash_flow for total cash."
+    tests:
+      - unique_combination_of_columns:
+          arguments:
+            combination_of_columns: [run_date, account_label, ticker]
+  - name: fct_covered_call_premiums
+    columns:
+      - name: run_date
+        tests: [not_null]
+      - name: account_label
+        tests: [not_null]
+      - name: ticker
+        tests: [not_null]
+      - name: net_pnl
+        description: "Realized option-premium P&L (Fidelity sign: credits positive); assignment cash excluded (stock leg) — use net_cash_flow for total cash."
+    tests:
+      - unique_combination_of_columns:
+          arguments:
+            combination_of_columns: [run_date, account_label, ticker]

@@ -1,0 +1,5 @@
+# Developer-only tooling. Runtime dependencies live in requirements.txt.
+-r requirements.txt
+
+# Linter used by CI and `make test` (matches the version cached locally).
+ruff==0.16.7

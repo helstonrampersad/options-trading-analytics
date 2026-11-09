@@ -1,0 +1,19 @@
+version: 2
+
+models:
+  - name: stg_fidelity_trades
+    description: "Normalized Fidelity trades: casts, USD conversion, contract parse, strategy label"
+    columns:
+      - name: account_label
+        tests: [not_null]
+      - name: run_date
+        tests: [not_null]
+      - name: amount_usd
+        tests: [not_null]
+      - name: row_hash
+        tests: [unique, not_null]
+      - name: strategy
+        tests:
+          - not_null
+          - accepted_values:
+              values: ["PLTR_wheel", "leap", "covered_call", "day_trade", "csp", "margin_interest", "other"]

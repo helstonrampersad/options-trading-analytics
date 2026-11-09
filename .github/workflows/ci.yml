@@ -1,0 +1,75 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+# Least privilege: CI only needs to read the repository.
+permissions:
+  contents: read
+
+# Cancel superseded runs on the same branch or pull request.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    name: pytest + local dbt (DuckDB) + credential-free dbt parse
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      # Do not send dbt usage telemetry from CI.
+      DBT_SEND_ANONYMOUS_USAGE_STATS: "false"
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+          cache-dependency-path: "**/requirements*.txt"
+
+      - name: Install pinned dependencies
+        run: pip install -r requirements.txt -r requirements-dev.txt
+
+      - name: Show dbt version
+        run: dbt --version
+
+      - name: Lint (ruff)
+        run: ruff check ingest tests scripts
+
+      - name: Unit tests (pytest)
+        run: pytest tests/ -q
+
+      # Fully synthetic end-to-end run of the local DuckDB path:
+      # no credentials, no network, no real account data.
+      - name: Local DuckDB pipeline on synthetic fixture
+        run: |
+          mkdir -p data/raw
+          cp tests/fixtures/sample_history.csv data/raw/
+          printf 'GCP_PROJECT_ID=ci-project\nFILE_sample_history=LLC_MAIN\n' > ci.env
+          python -m ingest.duckdb_loader --db data/ci.duckdb --source-dir data/raw --env ci.env
+          DUCKDB_PATH="$PWD/data/ci.duckdb" dbt run --project-dir dbt_local --profiles-dir dbt_local
+          DUCKDB_PATH="$PWD/data/ci.duckdb" dbt test --project-dir dbt_local --profiles-dir dbt_local
+
+      # `dbt parse` validates/compiles the cloud projects without connecting to a
+      # warehouse, so no secrets are needed - just placeholder values for every
+      # env_var() their profiles.yml files reference.
+      - name: Parse BigQuery dbt project (no credentials needed)
+        env:
+          GCP_PROJECT_ID: dummy-project
+        run: dbt parse --project-dir dbt_project --profiles-dir dbt_project
+
+      - name: Parse Databricks dbt project (no credentials needed)
+        env:
+          DATABRICKS_HOST: "https://example.com"
+          DATABRICKS_HTTP_PATH: "/sql/1.0/warehouses/0000000000000000"
+          DATABRICKS_TOKEN: "dummy-token"
+        run: dbt parse --project-dir dbt_databricks --profiles-dir dbt_databricks

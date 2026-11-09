@@ -1,0 +1,151 @@
+-- ============================================================================
+-- Options Trading Analytics - Power BI measures (DAX)
+-- ============================================================================
+-- Model: three dbt marts, each already aggregated at its business grain:
+--   fct_wheel_mechanics        (run_date, account_label, ticker, strategy)
+--   fct_cash_secured_puts      (run_date, account_label, ticker)
+--   fct_covered_call_premiums  (run_date, account_label, ticker)
+--
+-- Because every row is a pre-aggregated group (n_trades, net_pnl, ...), most
+-- measures SUM columns instead of counting rows. "Groups" measures count
+-- mart rows; "Trades" measures sum the underlying trade counts.
+--
+-- How to use: Modeling -> New table -> `_Measures = { }` (a blank table),
+-- then add each measure below with New measure. If you loaded the CSV export
+-- (`marts__fct_*.csv`), rename each Power Query query to the bare table name
+-- first, otherwise the table references below will not resolve.
+--
+-- Sign convention (Fidelity statement): credits are positive. net_pnl is
+-- realized option-premium P&L and excludes assignment cash; net_cash_flow is
+-- total option cash, assignments included.
+--
+-- No date table is assumed (see the DimDate note at the bottom).
+-- ============================================================================
+
+
+-- Core P&L and cash ---------------------------------------------------------
+
+Total Net P&L =
+SUM ( fct_wheel_mechanics[net_pnl] )
+-- All realized option-premium P&L across wheel/put/call strategies.
+
+Total Cash Flow =
+SUM ( fct_wheel_mechanics[net_cash_flow] )
+-- Total option cash flow, assignment stock legs included.
+
+Calls Premium Collected =
+SUM ( fct_covered_call_premiums[premium_collected] )
+
+Puts Cash Flow =
+SUM ( fct_cash_secured_puts[net_cash_flow] )
+-- The puts mart has no dedicated "premium_collected" column, so put premium
+-- is proxied with put net cash flow (assignment rows carry no option cash).
+
+Total Premium =
+[Calls Premium Collected] + [Puts Cash Flow]
+-- Total premium collected from option activity (calls exact, puts proxied).
+
+
+-- Activity counts -----------------------------------------------------------
+
+Trades =
+SUM ( fct_wheel_mechanics[n_trades] )
+
+Wheel Groups =
+COUNTROWS ( fct_wheel_mechanics )
+
+Put Groups =
+COUNTROWS ( fct_cash_secured_puts )
+
+Call Groups =
+COUNTROWS ( fct_covered_call_premiums )
+
+Groups =
+[Wheel Groups] + [Put Groups] + [Call Groups]
+-- Total mart grain rows across the three marts (row counts, not trade counts).
+
+Puts Sold =
+SUM ( fct_cash_secured_puts[n_puts_sold] )
+
+Puts Assigned =
+SUM ( fct_cash_secured_puts[n_assignments] )
+
+Puts Expired =
+SUM ( fct_cash_secured_puts[n_expired] )
+
+Calls Sold =
+SUM ( fct_covered_call_premiums[n_calls_sold] )
+
+Calls Called Away =
+SUM ( fct_covered_call_premiums[n_called_away] )
+
+Calls Expired =
+SUM ( fct_covered_call_premiums[n_expired] )
+
+Assignments =
+[Puts Assigned] + [Calls Called Away]
+
+
+-- Ratios and chart helpers --------------------------------------------------
+
+Assignment Rate =
+DIVIDE ( [Puts Assigned], [Puts Sold] )
+-- Share of sold puts that ended in assignment; format as percentage.
+
+Avg DTE =
+DIVIDE (
+    SUMX (
+        fct_wheel_mechanics,
+        fct_wheel_mechanics[avg_dte] * fct_wheel_mechanics[n_trades]
+    ),
+    [Trades]
+)
+-- Trade-weighted average days-to-expiry. Each wheel row stores an average,
+-- so weighting by n_trades keeps the portfolio number honest.
+
+Active Tickers =
+DISTINCTCOUNT ( fct_wheel_mechanics[ticker] )
+
+P&L by Strategy =
+SUMX ( VALUES ( fct_wheel_mechanics[strategy] ), [Total Net P&L] )
+-- Helper for the "P&L by strategy" bar chart: put strategy on the axis; the
+-- measure makes the per-strategy total explicit in the field well.
+
+P&L Share by Strategy =
+DIVIDE (
+    [Total Net P&L],
+    CALCULATE ( [Total Net P&L], ALLSELECTED ( fct_wheel_mechanics[strategy] ) )
+)
+-- Optional data-label helper for the same bar chart; format as percentage.
+
+Other Strategy Share =
+DIVIDE (
+    CALCULATE ( [Trades], fct_wheel_mechanics[strategy] = "other" ),
+    [Trades]
+)
+-- Share of option trades classified as "other" (data-quality signal).
+
+Premium per Trade =
+DIVIDE ( [Total Premium], [Trades] )
+
+P&L per Trade =
+DIVIDE ( [Total Net P&L], [Trades] )
+
+
+-- Freshness ----------------------------------------------------------------
+
+Latest Run Date =
+MAX ( fct_wheel_mechanics[run_date] )
+-- Format as a short date; drives the "latest pipeline run" card.
+
+Run Days =
+DISTINCTCOUNT ( fct_wheel_mechanics[run_date] )
+
+
+-- Optional date table (not required by any measure above) ------------------
+-- Create: Modeling -> New table -> DimDate = CALENDAR ( MIN ( fct_wheel_mechanics[run_date] ), MAX ( fct_wheel_mechanics[run_date] ) )
+-- then Mark as date table (Table tools -> Mark as date table) and create a
+-- many-to-one relationship from each fact table's run_date to DimDate[Date].
+-- Only after that add time-intelligence (MTD/YTD) measures; the measures
+-- above deliberately avoid date-table assumptions so the report works with
+-- the raw run_date column alone.

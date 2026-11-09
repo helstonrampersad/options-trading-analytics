@@ -1,0 +1,15 @@
+# Normalize every text file to LF so the repo behaves the same on Windows/WSL/CI.
+* text=auto eol=lf
+
+# Scripts and source files must stay LF (bash and dbt SQL are sensitive to CRLF).
+*.sh  text eol=lf
+*.py  text eol=lf
+*.sql text eol=lf
+*.yml text eol=lf
+*.csv text eol=lf
+
+# Binary artifacts - never touched by text normalization.
+*.duckdb binary
+*.pbix   binary
+*.png    binary
+*.jpg    binary

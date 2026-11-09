@@ -1,0 +1,84 @@
+{
+  "name": "Options Trading Analytics",
+  "dataColors": [
+    "#0B3C5D",
+    "#1B6CA8",
+    "#2A9D8F",
+    "#4FB3A9",
+    "#7FB7BE",
+    "#F2A65A",
+    "#D96C4E",
+    "#6C757D"
+  ],
+  "foreground": "#0B2545",
+  "background": "#FFFFFF",
+  "tableAccent": "#2A9D8F",
+  "good": "#2E8B57",
+  "neutral": "#6C757D",
+  "bad": "#C0392B",
+  "maximum": "#0B3C5D",
+  "center": "#7FB7BE",
+  "minimum": "#F2A65A",
+  "textClasses": {
+    "callout": {
+      "fontFace": "Segoe UI Semibold",
+      "fontSize": 28,
+      "color": "#0B2545"
+    },
+    "title": {
+      "fontFace": "Segoe UI Semibold",
+      "fontSize": 14,
+      "color": "#0B2545"
+    },
+    "header": {
+      "fontFace": "Segoe UI Semibold",
+      "fontSize": 11,
+      "color": "#0B2545"
+    },
+    "label": {
+      "fontFace": "Segoe UI",
+      "fontSize": 9,
+      "color": "#3B4A5A"
+    }
+  },
+  "visualStyles": {
+    "*": {
+      "*": {
+        "background": [
+          {
+            "show": true,
+            "color": {
+              "solid": {
+                "color": "#FFFFFF"
+              }
+            },
+            "transparency": 0
+          }
+        ],
+        "border": [
+          {
+            "show": true,
+            "color": {
+              "solid": {
+                "color": "#D5DEE8"
+              }
+            },
+            "radius": 6
+          }
+        ],
+        "title": [
+          {
+            "show": true,
+            "fontColor": {
+              "solid": {
+                "color": "#0B2545"
+              }
+            },
+            "fontSize": 12,
+            "fontFamily": "Segoe UI Semibold"
+          }
+        ]
+      }
+    }
+  }
+}
