@@ -1,7 +1,7 @@
 # Project Status — Options Trading Analytics Pipeline
 
 **Last updated:** 2026-11-09
-**Repo:** `options-trading-analytics` (public GitHub release in preparation)
+**Repo:** github.com/helstonrampersad/options-trading-analytics (private until the first CI run passes)
 **Purpose:** single-page context for future sessions, reviewers, and job-application reference.
 Nothing here is secret; the owner's real exports, `.env`, and cloud identifiers are never written to this file.
 

@@ -5,14 +5,14 @@ anonymization and content-hash deduplication, dbt staging and incremental marts,
 orchestration, and a Power BI layer — the same medallion design implemented four ways across
 three engines (BigQuery, DuckDB, Databricks).
 
-![CI](https://github.com/<owner>/options-trading-analytics/actions/workflows/ci.yml/badge.svg)
+![CI](https://github.com/helstonrampersad/options-trading-analytics/actions/workflows/ci.yml/badge.svg)
 
 > **No private data in this repository.** Committed data is limited to a synthetic fixture
 > (`tests/fixtures/sample_history.csv`) and synthetic Power BI samples under
 > `powerbi/sample_data/`. Real exports live outside the repo and are gitignored; account
 > numbers are mapped to labels in an untracked `.env` before any row is built.
 
-**Status:** prepared for public release. CI is configured to run on every push; the badge
+**Status:** repository prepared for publication. CI is configured to run on every push; the badge
 fills in after the first GitHub Actions run. The Power BI layer is prepared (assets and a
 build spec), not built or published.
 
@@ -88,7 +88,7 @@ Prerequisites: Python 3.11, `uv`, git. On Windows use **WSL2 Ubuntu** (recommend
 Windows lacks the toolchain.
 
 ```bash
-git clone https://github.com/<owner>/options-trading-analytics.git
+git clone https://github.com/helstonrampersad/options-trading-analytics.git
 cd options-trading-analytics
 ./run.sh setup      # .venv with Python 3.11 + pinned dependencies
 ./run.sh sample     # synthetic fixture -> data/sample.duckdb -> dbt run + dbt test
