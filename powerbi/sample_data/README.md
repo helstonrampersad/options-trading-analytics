@@ -19,6 +19,12 @@ Each CSV is a small excerpt in the **exact mart schema** produced by dbt
 | `fct_wheel_mechanics.csv` | `marts.fct_wheel_mechanics` | run_date, account_label, ticker, strategy | 10 |
 | `fct_cash_secured_puts.csv` | `marts.fct_cash_secured_puts` | run_date, account_label, ticker | 6 |
 | `fct_covered_call_premiums.csv` | `marts.fct_covered_call_premiums` | run_date, account_label, ticker | 6 |
+| `dashboard_synthetic.csv` | combined table from `build_dashboard_dataset.py` | run_date, account_label, ticker, strategy, source | 620 |
+
+`dashboard_synthetic.csv` is the **fast path** for building the report: one import, no
+relationships. It is generated deterministically by
+`python powerbi/build_dashboard_dataset.py --mode synthetic` and uses the same column set as
+the real combined export (`data/exports/powerbi/dashboard.csv`, gitignored).
 
 The three files are mutually consistent on purpose: for these rows,
 `fct_wheel_mechanics` equals the union of the put and call groups (same

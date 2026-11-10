@@ -65,9 +65,10 @@ sample:
 	DUCKDB_PATH="$(SAMPLE_DB)" $(DBT_LOCAL) run $(DBT_LOCAL_FLAGS)
 	DUCKDB_PATH="$(SAMPLE_DB)" $(DBT_LOCAL) test $(DBT_LOCAL_FLAGS)
 
-# Requires the Power BI export script from powerbi/ (writes to a gitignored folder).
+# Export the marts plus the single combined Power BI table (gitignored output).
 powerbi:
 	python3 powerbi/export_marts.py --db "$(DUCKDB_PATH)" --out data/exports/powerbi
+	python3 powerbi/build_dashboard_dataset.py --mode real --db "$(DUCKDB_PATH)" --out data/exports/powerbi/dashboard.csv
 
 # ruff needs the dev tools: .venv/bin/activate, or ./run.sh setup installed them.
 test:

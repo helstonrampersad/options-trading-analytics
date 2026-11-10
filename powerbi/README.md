@@ -15,12 +15,31 @@ dictionary, and synthetic sample data so anyone can demo without private trades.
 - **CSPs & Covered Calls** — put/call lifecycle funnels, P&L by ticker, strike/DTE views, account matrix.
 - **Data Quality & Ops** — latest run date, mart row counts, strategy mix, reconciliation note.
 
-## Quick start
+## Quick start — fastest path (10–15 minutes)
 
-1. Install Power BI Desktop (section 1).
-2. Connect the marts (section 2, Option A BigQuery or Option B local export).
-3. Import `theme.json`, add the measures from `measures.dax`, then follow `dashboard-spec.md`.
-4. Save as `powerbi/OptionsTrading.pbix` (gitignored) and screenshot page 1 into `screenshots/`.
+1. Install Power BI Desktop (section 1) — already installed if the app opens.
+2. Build the **single combined dataset** (easiest import — no relationships or renaming):
+   - your real trades (local only): `./run.sh powerbi` → `data/exports/powerbi/dashboard.csv`
+   - or the committed safe demo: `sample_data/dashboard_synthetic.csv` (620 synthetic rows)
+3. Power BI Desktop → **Get Data → Text/CSV** → pick that one file → **Load**.
+4. Import `theme.json` (View → Themes → Browse for themes), add the five quick measures from
+   the top of `dashboard-spec.md`, then follow its single-table visual table.
+5. **File → Save as** → `powerbi/OptionsTrading.pbix` (gitignored), then screenshot page 1 into
+   `screenshots/`.
+
+The combined file is produced by `build_dashboard_dataset.py` and merges the three marts into
+one flat table. For a BigQuery connection see section 2 Option A; for per-mart CSV/ODBC
+connections see Options B and C.
+
+### Combined dataset columns
+
+| Column | Meaning |
+|---|---|
+| `run_date`, `account_label`, `ticker`, `strategy` | dimensions (account labels are anonymized) |
+| `source` | which mart the row came from: `wheel`, `puts`, `calls` — filter on it before aggregating |
+| `option_type` | `PUT`, `CALL`, or `MIXED` |
+| `trades`, `sells`, `assignments`, `expiries` | activity counts |
+| `net_pnl`, `net_cash_flow`, `premium`, `avg_dte` | measures (nulls expected where a mart does not track the field) |
 
 ## Contents
 
@@ -132,8 +151,9 @@ This is the least portable option; the CSV/Parquet route (Option B) is enough fo
 ## 4. Demo without private data
 
 `sample_data/` holds hand-written synthetic CSVs in the exact mart schemas (10 wheel / 6 puts /
-6 calls rows, invented tickers and premiums). They are safe to commit and let anyone build
-the report without the owner's trades: import them like Option B, skipping the export step.
+6 calls rows, invented tickers and premiums), plus `dashboard_synthetic.csv`, the 620-row
+combined table used by the fast path. They are safe to commit and let anyone build the report
+without the owner's trades: import them like Option B, skipping the export step.
 See `sample_data/README.md` for the manifest and column dictionary.
 
 ## 5. Screenshots for the repo README

@@ -7,6 +7,37 @@ marts and the measures in `measures.dax`; the data connection is explained in `R
 You need: Power BI Desktop installed, the three mart tables loaded, and this folder open on
 a second screen (or printed) so you can copy field names.
 
+## Fastest path — one combined table
+
+`build_dashboard_dataset.py` merges the three marts into a single flat table, so the whole
+report can be built from **one import** (no relationships, no query renames). Build it with
+`./run.sh powerbi` (real data, local only) or use the committed synthetic
+`sample_data/dashboard_synthetic.csv` (620 rows, safe to share). Load it with
+**Get Data → Text/CSV**, rename the query to `dashboard`, then add these quick measures
+(Modeling → New measure):
+
+```dax
+Total Net P&L  = SUM(dashboard[net_pnl])
+Total Premium  = SUM(dashboard[premium])
+Total Trades   = SUM(dashboard[trades])
+Active Tickers = DISTINCTCOUNT(dashboard[ticker])
+Last Run Date  = MAX(dashboard[run_date])
+```
+
+| Page | Visual | Type | Fields (filter notes) |
+|---|---|---|---|
+| Wheel Overview | Net P&L / Premium / Trades / Tickers | Cards | the four measures above |
+| Wheel Overview | P&L by strategy | Clustered bar | Axis `strategy`, Values `[Total Net P&L]`; filter `source` is `wheel` |
+| Wheel Overview | Monthly P&L trend | Line chart | Axis `run_date` (Month), Values `[Total Net P&L]`; filter `source` is `wheel` |
+| Wheel Overview | Account slicer | Slicer | `account_label` |
+| CSPs & Covered Calls | Put activity | Table | `account_label`, `ticker`, `sells`, `assignments`, `expiries`; filter `source` is `puts` |
+| CSPs & Covered Calls | Call premium by ticker | Clustered bar | Axis `ticker`, Values `[Total Premium]`; filter `source` is `calls` |
+| CSPs & Covered Calls | Activity split | Donut | Legend `source`, Values `[Total Trades]` |
+| Data Quality & Ops | Freshness / size | Cards + table | `[Last Run Date]`, `COUNTROWS(dashboard)`, table of `source` by row count |
+
+Continue below only if you want the richer three-mart model (separate `fct_*` tables,
+`DimAccount`, and the full `measures.dax` set).
+
 ## Step 0 — data + model (5 min)
 
 1. **Get Data** and load the three marts (`fct_wheel_mechanics`, `fct_cash_secured_puts`,

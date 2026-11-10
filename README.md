@@ -155,13 +155,14 @@ Both target Databricks Free Edition; CI runs only a credential-free `dbt parse` 
 ## Power BI
 
 Prepared but not built or published: build spec, DAX measures, theme, data dictionary, export
-script, and synthetic samples (no real trades).
+scripts (per-mart and a single combined dashboard table), and synthetic samples (no real trades).
 
 ```bash
-make powerbi   # or: python powerbi/export_marts.py --db data/local.duckdb --out data/exports/powerbi
+make powerbi   # or: python powerbi/export_marts.py ... ; python powerbi/build_dashboard_dataset.py ...
 ```
 
-Exports write one CSV per analytics object plus a manifest (`--format parquet` is also supported); the
+Exports write one CSV per analytics object plus a manifest and a combined
+`dashboard.csv` for a one-file import (`--format parquet` is also supported); the
 report can instead connect to BigQuery with the native connector. Start at
 `powerbi/README.md`, then `powerbi/dashboard-spec.md`. The `.pbix` stays local and gitignored.
 

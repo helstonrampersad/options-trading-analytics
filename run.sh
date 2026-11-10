@@ -138,6 +138,7 @@ case "${1:-help}" in
     activate_venv
     mkdir -p data/exports/powerbi
     python powerbi/export_marts.py --db "$DUCKDB_PATH" --out data/exports/powerbi
+    python powerbi/build_dashboard_dataset.py --mode real --db "$DUCKDB_PATH" --out data/exports/powerbi/dashboard.csv
     ;;
   query)
     activate_venv
