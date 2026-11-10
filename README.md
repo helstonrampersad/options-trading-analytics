@@ -12,9 +12,9 @@ three engines (BigQuery, DuckDB, Databricks).
 > `powerbi/sample_data/`. Real exports live outside the repo and are gitignored; account
 > numbers are mapped to labels in an untracked `.env` before any row is built.
 
-**Status:** repository prepared for publication. CI is configured to run on every push; the badge
-fills in after the first GitHub Actions run. The Power BI layer is prepared (assets and a
-build spec), not built or published.
+**Status:** v1.0 published on GitHub with green CI — every push runs pytest, the synthetic
+DuckDB pipeline, and credential-free `dbt parse` for the cloud projects. The Power BI layer is
+prepared (assets and a build spec), not built or published.
 
 ## Why this project
 
@@ -211,7 +211,7 @@ across engines (D5), reconciliation tests (D6), `net_pnl` vs `net_cash_flow` (D7
 
 ## Roadmap
 
-- First GitHub Actions run, then branch protection and the green CI badge.
+- First GitHub Actions run is green; enable branch protection once the repository is public.
 - Build the Power BI dashboard from `powerbi/dashboard-spec.md`.
 - `dbt docs generate` and a lineage screenshot; deploy the Airflow DAGs to a scheduler (or use
   Databricks Workflows).

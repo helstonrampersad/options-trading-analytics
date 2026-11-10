@@ -1,7 +1,7 @@
 # Project Status — Options Trading Analytics Pipeline
 
 **Last updated:** 2026-11-09
-**Repo:** github.com/helstonrampersad/options-trading-analytics (private until the first CI run passes)
+**Repo:** https://github.com/helstonrampersad/options-trading-analytics (private pending final visibility review; v1.0 release published)
 **Purpose:** single-page context for future sessions, reviewers, and job-application reference.
 Nothing here is secret; the owner's real exports, `.env`, and cloud identifiers are never written to this file.
 
@@ -24,16 +24,18 @@ owner's credentials and are not part of CI.
 
 ## Release status (2026-11-09)
 
-**Repository prepared for public release.** The committed tree is staged for publication:
+**Repository published to GitHub** (private pending final visibility review) and tagged v1.0.
+The committed tree is publication-safe:
 no real trade CSVs, no `.env`, no account numbers, no cloud project IDs or workspace URLs, no
 personal absolute paths. The only committed data is the synthetic fixture
 `tests/fixtures/sample_history.csv` plus synthetic Power BI sample CSVs under
 `powerbi/sample_data/`. The owner's real exports live outside the repo and are gitignored;
 `scripts/privacy_check.py` is the pre-push guard.
 
-- **CI:** `.github/workflows/ci.yml` is configured for every push/PR/manual dispatch (pytest,
+- **CI:** `.github/workflows/ci.yml` runs on every push/PR/manual dispatch (ruff, pytest,
   end-to-end DuckDB run on the committed synthetic fixture, credential-free `dbt parse` for the
-  cloud projects). It has **not yet run on GitHub** — the Actions badge appears after the first run.
+  cloud projects). The first GitHub Actions run (2026-11-09, run `42725377720`) completed
+  **success**, including the `pytest + local dbt (DuckDB) + credential-free dbt parse` job.
 - **Power BI:** assets are prepared (export script, DAX measures, theme, data dictionary,
   synthetic sample CSVs, build spec); the dashboard is **not built or published** — the build
   proceeds from `powerbi/dashboard-spec.md`.
@@ -97,7 +99,8 @@ is future work; the repo does not claim scheduled runs.
 
 ## Known gaps / honest caveats
 
-- CI badge and first GitHub Actions run are pending the push.
+- CI is green and the repo is pushed; the remaining release steps are the public visibility flip,
+  branch protection, and a dashboard screenshot once the Power BI report is built.
 - The Power BI dashboard is prepared but not built or published; only assets and synthetic samples exist.
 - BigQuery and Databricks runs depend on owner credentials and were not exercised in the release-prep verification above.
 - The four implementations share a design, not a runtime; keeping them in sync is manual.
@@ -106,7 +109,8 @@ is future work; the repo does not claim scheduled runs.
 
 ## Roadmap
 
-1. Push to GitHub (private first), enable branch protection and the CI badge after the first green run.
+1. Done: pushed to GitHub and the first CI run is green. Remaining: flip the repository public,
+   add branch protection, and commit the Power BI dashboard screenshot.
 2. Finish and publish the Power BI dashboard over the marts (BigQuery connector or DuckDB→CSV exports).
 3. `dbt docs generate` and link a lineage screenshot from the README.
 4. Deploy the Airflow DAGs to a scheduler, or schedule the Databricks notebook with Databricks Workflows.
