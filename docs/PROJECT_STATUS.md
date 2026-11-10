@@ -1,7 +1,7 @@
 # Project Status — Options Trading Analytics Pipeline
 
-**Last updated:** 2026-11-09
-**Repo:** https://github.com/helstonrampersad/options-trading-analytics (private pending final visibility review; v1.0 release published)
+**Last updated:** 2026-11-10
+**Repo:** https://github.com/helstonrampersad/options-trading-analytics (v1.0 tagged; CI green)
 **Purpose:** single-page context for future sessions, reviewers, and job-application reference.
 Nothing here is secret; the owner's real exports, `.env`, and cloud identifiers are never written to this file.
 
@@ -22,10 +22,9 @@ views → incremental marts — is implemented four ways across three engines:
 The local DuckDB path is the one exercised end to end by tests and CI. Cloud paths require the
 owner's credentials and are not part of CI.
 
-## Release status (2026-11-09)
+## Release status (2026-11-10)
 
-**Repository published to GitHub** (private pending final visibility review) and tagged v1.0.
-The committed tree is publication-safe:
+**Repository published to GitHub** and tagged v1.0. The committed tree is publication-safe:
 no real trade CSVs, no `.env`, no account numbers, no cloud project IDs or workspace URLs, no
 personal absolute paths. The only committed data is the synthetic fixture
 `tests/fixtures/sample_history.csv` plus synthetic Power BI sample CSVs under
@@ -35,10 +34,11 @@ personal absolute paths. The only committed data is the synthetic fixture
 - **CI:** `.github/workflows/ci.yml` runs on every push/PR/manual dispatch (ruff, pytest,
   end-to-end DuckDB run on the committed synthetic fixture, credential-free `dbt parse` for the
   cloud projects). The first GitHub Actions run (2026-11-09, run `42725377720`) completed
-  **success**, including the `pytest + local dbt (DuckDB) + credential-free dbt parse` job.
-- **Power BI:** assets are prepared (export script, DAX measures, theme, data dictionary,
-  synthetic sample CSVs, build spec); the dashboard is **not built or published** — the build
-  proceeds from `powerbi/dashboard-spec.md`.
+  **success**, and subsequent pushes are green as well.
+- **Power BI:** import-ready assets are committed — a single combined dataset builder
+  (`powerbi/build_dashboard_dataset.py`), DAX measures, theme, data dictionary, synthetic sample
+  data, and a page-by-page build spec. The `.pbix` report is built locally in Power BI Desktop
+  and is gitignored; screenshots go under `powerbi/screenshots/`.
 - **Orchestration:** Airflow DAGs and a Databricks Workflows path are authored; neither runs on a
   scheduler in this repo — that is a deployment step, not a claim.
 
@@ -99,22 +99,21 @@ is future work; the repo does not claim scheduled runs.
 
 ## Known gaps / honest caveats
 
-- CI is green and the repo is pushed; the remaining release steps are the public visibility flip,
-  branch protection, and a dashboard screenshot once the Power BI report is built.
-- The Power BI dashboard is prepared but not built or published; only assets and synthetic samples exist.
-- BigQuery and Databricks runs depend on owner credentials and were not exercised in the release-prep verification above.
+- CI is green and the tree is pushed; the next polish step is committing dashboard screenshots.
+- A Power BI report can be built locally from the committed dataset, measures and spec; the
+  `.pbix` is intentionally not committed.
+- BigQuery and Databricks runs depend on owner credentials and were not exercised in the
+  release-prep verification above.
 - The four implementations share a design, not a runtime; keeping them in sync is manual.
 - Some `History_for_Account_...` exports are skipped by design: a filename whose stem has a
   hyphen cannot match a `FILE_*` key, and those rows already appear in the monthly exports.
 
 ## Roadmap
 
-1. Done: pushed to GitHub and the first CI run is green. Remaining: flip the repository public,
-   add branch protection, and commit the Power BI dashboard screenshot.
-2. Finish and publish the Power BI dashboard over the marts (BigQuery connector or DuckDB→CSV exports).
-3. `dbt docs generate` and link a lineage screenshot from the README.
-4. Deploy the Airflow DAGs to a scheduler, or schedule the Databricks notebook with Databricks Workflows.
-5. Optional differentiator: MCP server + data-health watchdog + agent skill (see `docs/MCP_AGENT_LAYER.md`,
+1. Add Power BI dashboard screenshots to the README (`powerbi/screenshots/`).
+2. `dbt docs generate` and link a lineage screenshot from the README.
+3. Deploy the Airflow DAGs to a scheduler, or schedule the Databricks notebook with Databricks Workflows.
+4. Optional differentiator: MCP server + data-health watchdog + agent skill (see `docs/MCP_AGENT_LAYER.md`,
    parked until the release and applications are done).
 
 ## Resume bullets (defensible as written)

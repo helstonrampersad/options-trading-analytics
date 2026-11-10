@@ -4,10 +4,10 @@ The visualization layer for the pipeline: connect **Power BI Desktop** (free, Wi
 to the three dbt marts — `fct_wheel_mechanics`, `fct_cash_secured_puts`,
 `fct_covered_call_premiums` — and build a three-page report from `dashboard-spec.md`.
 
-The report is prepared here but **not built or published**: you build it locally in Power BI
-Desktop and the `.pbix` stays on your machine (gitignored). This folder ships everything
-needed — an offline export script, DAX measures, a theme, the page-by-page build spec, a data
-dictionary, and synthetic sample data so anyone can demo without private trades.
+The report is built locally in Power BI Desktop and the `.pbix` stays on your machine
+(gitignored). This folder ships everything needed — dataset export scripts, DAX measures, a
+theme, the page-by-page build spec, a data dictionary, and synthetic sample data so anyone can
+demo without private trades.
 
 ## What you'll build
 
@@ -158,11 +158,19 @@ See `sample_data/README.md` for the manifest and column dictionary.
 
 ## 5. Screenshots for the repo README
 
-`screenshots/` is an empty placeholder (`.gitkeep`) so the folder exists in git. After
-building page 1, capture it (`Win+Shift+S`, or **File → Export → PDF** and crop) and save it
-as `powerbi/screenshots/wheel-overview.png` (optionally `csp-covered-calls.png`), then link
-the image from the repo README. For public screenshots use the **synthetic sample data**, not
-real balances — no account numbers or private P&L should appear in any committed image.
+Use the **synthetic sample data** for anything committed — no real balances, account numbers,
+or P&L may appear in an image. Capture just the report canvas (`Win+Shift+S`), 1600–1920 px
+wide, and save these files:
+
+| File | Shot |
+|---|---|
+| `screenshots/01-wheel-overview.png` | Page 1 full canvas (KPI cards, monthly trend, strategy bar, account slicer) |
+| `screenshots/02-csp-covered-calls.png` | Page 2 (put/call lifecycle, P&L by ticker, activity donut) |
+| `screenshots/03-data-quality.png` | Page 3 (freshness, row counts, source mix) |
+| `screenshots/04-model-view.png` | Model view showing the fact tables and `DimAccount` relationships |
+
+`loadData` / `save` guidance: the folder is tracked (`.gitkeep`) so the images can be added
+straight to the repo; then link them from the top of the root `README.md` as an image gallery.
 
 ## Troubleshooting
 

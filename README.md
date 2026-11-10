@@ -6,22 +6,28 @@ orchestration, and a Power BI layer — the same medallion design implemented fo
 three engines (BigQuery, DuckDB, Databricks).
 
 ![CI](https://github.com/helstonrampersad/options-trading-analytics/actions/workflows/ci.yml/badge.svg)
+![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
+![Python 3.11](https://img.shields.io/badge/Python-3.11-blue)
+
+**At a glance:** 4 implementations across 3 engines (BigQuery · DuckDB · Databricks) ·
+35 pytest + 28 dbt tests including P&L reconciliation · one-command synthetic demo ·
+credential-free GitHub Actions CI.
 
 > **No private data in this repository.** Committed data is limited to a synthetic fixture
 > (`tests/fixtures/sample_history.csv`) and synthetic Power BI samples under
 > `powerbi/sample_data/`. Real exports live outside the repo and are gitignored; account
 > numbers are mapped to labels in an untracked `.env` before any row is built.
 
-**Status:** v1.0 published on GitHub with green CI — every push runs pytest, the synthetic
-DuckDB pipeline, and credential-free `dbt parse` for the cloud projects. The Power BI layer is
-prepared (assets and a build spec), not built or published.
+**Status:** v1.0 tagged and CI green on every push. The local pipeline is verified end to end
+(35 pytest + 28 dbt tests); the cloud paths run with the owner's credentials.
 
 ## Why this project
 
 A personal portfolio project built on real trading data that cannot be published — and that
 constraint is the point: it shows production-style data engineering around private data
 (anonymize before ingestion, idempotent loads, reconciliation tests, portability across
-engines). It is intentionally small and finished, not broad and theoretical.
+engines). The scope is deliberately focused on one well-tested domain rather than breadth for
+its own sake.
 
 ## Architecture
 
@@ -52,7 +58,7 @@ flowchart LR
 | Language | Python 3.11, `uv`-managed venv |
 | Ingestion | stdlib `csv`, `python-dotenv`, `google-cloud-bigquery` |
 | Transformation / engines | dbt-core with `dbt-bigquery`, `dbt-duckdb`, `dbt-databricks`; engines: BigQuery, DuckDB, Databricks (Spark + Delta) |
-| Orchestration / BI | Airflow 3 DAGs, Databricks Workflows, Power BI |
+| Orchestration / BI | Airflow 3 DAGs, Databricks Workflows (optional), Power BI assets |
 | Tests / CI | pytest, dbt generic + singular tests, GitHub Actions, `ruff` |
 
 ## Data model
@@ -154,22 +160,24 @@ Both target Databricks Free Edition; CI runs only a credential-free `dbt parse` 
 
 ## Power BI
 
-Prepared but not built or published: build spec, DAX measures, theme, data dictionary, export
-scripts (per-mart and a single combined dashboard table), and synthetic samples (no real trades).
+A **Power BI layer** ships in `powerbi/`: an import-ready combined dataset builder
+(`build_dashboard_dataset.py`), DAX measures, a report theme, a data dictionary, synthetic
+sample data, and a page-by-page build spec.
 
 ```bash
-make powerbi   # or: python powerbi/export_marts.py ... ; python powerbi/build_dashboard_dataset.py ...
+make powerbi        # or: ./run.sh powerbi
+# -> data/exports/powerbi/dashboard.csv  (single-table import; gitignored)
 ```
 
-Exports write one CSV per analytics object plus a manifest and a combined
-`dashboard.csv` for a one-file import (`--format parquet` is also supported); the
-report can instead connect to BigQuery with the native connector. Start at
-`powerbi/README.md`, then `powerbi/dashboard-spec.md`. The `.pbix` stays local and gitignored.
+Import that one CSV in Power BI Desktop (**Get Data → Text/CSV**), add the measures from
+`powerbi/measures.dax`, and follow `powerbi/dashboard-spec.md`. The committed
+`powerbi/sample_data/dashboard_synthetic.csv` lets anyone build the report without private
+trades; the `.pbix` stays local and gitignored.
 
 ## Testing and CI
 
-Run on 2026-11-09 on the local toolchain: `pytest tests/ -q` → **35 passed**; `dbt test` →
-**PASS=28, ERROR=0**.
+Local verification (2026-11-09, Python 3.11 + dbt on DuckDB): `pytest tests/ -q` → **35 passed**;
+`dbt test` → **PASS=28, ERROR=0**.
 
 - **35 pytest tests** cover anonymization, config, parsing (both header formats), hashing, and loaders.
 - **28 dbt tests per project**: 25 generic schema tests plus 3 singular P&L reconciliation SQL
@@ -177,7 +185,7 @@ Run on 2026-11-09 on the local toolchain: `pytest tests/ -q` → **35 passed**; 
 
 `.github/workflows/ci.yml` runs on every push, PR, and manual dispatch: `ruff`, pytest, the
 full local DuckDB pipeline on the synthetic fixture, and a credential-free `dbt parse` for the
-cloud projects. It uses no cloud credentials. It has not run on GitHub yet — see the badge.
+cloud projects. All runs are green (see the badge) and no cloud credentials are used.
 
 ## Orchestration
 
@@ -196,7 +204,7 @@ dbt_databricks/    dbt models for Databricks (Spark SQL)
 databricks/        Single-file PySpark/Delta medallion notebook
 airflow/           Airflow DAGs for the local and BigQuery pipelines
 powerbi/           Power BI assets: export script, DAX, theme, data dictionary, samples
-scripts/           Privacy check and maintenance helpers
+scripts/           Pre-push privacy check (account numbers / secret shapes)
 tests/             pytest suite + synthetic fixture (the only committed CSV data)
 data/              Local DuckDB databases and raw export drop folder (gitignored)
 docs/              Design decisions, runbook, status, curriculum, historical plans
@@ -212,10 +220,9 @@ across engines (D5), reconciliation tests (D6), `net_pnl` vs `net_cash_flow` (D7
 
 ## Roadmap
 
-- First GitHub Actions run is green; enable branch protection once the repository is public.
-- Build the Power BI dashboard from `powerbi/dashboard-spec.md`.
-- `dbt docs generate` and a lineage screenshot; deploy the Airflow DAGs to a scheduler (or use
-  Databricks Workflows).
+- Add dashboard screenshots and a short demo walkthrough to the README.
+- Generate `dbt docs` and link a lineage screenshot.
+- Deploy the Airflow DAGs to a scheduler (or schedule the notebook via Databricks Workflows).
 
 ## License
 
