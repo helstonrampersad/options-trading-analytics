@@ -29,17 +29,26 @@ the CI workflow, or committed files are still welcome.
 
 ## Pre-push guard
 
-`scripts/privacy_check.py` scans the working tree for account-number patterns and known
-secret shapes. Run it before pushing:
+`scripts/privacy_check.py` scans the working tree for Fidelity export filenames,
+`ACCOUNT_<number>` mapping keys, and known secret shapes. Run it before pushing:
 
 ```bash
 python scripts/privacy_check.py
 ```
 
+The account-number allowlist is deliberately tiny and explicit: the only permitted tokens are
+the synthetic values used by the tests (`Z90000000`, `Z90000001`, `900000001`, `900000002`,
+`ZZ00000`, `ZZ99999`), the label-prefix words `LLC`/`INDIVIDUAL` that appear inside already
+sanitized filenames, and the literal `REDACTED` fallback. Any other `ACCOUNT_...` key is
+reported — including in `.env.example` and test fixtures — so a real account number cannot hide
+behind a placeholder-looking file. There is no pattern or prefix rule that could accidentally
+whitelist a real broker account number.
+
 It is a safety net, not a substitute for careful review. If it flags a file, remove the
 sensitive content rather than modifying the check. The optional `--env .env` mode also searches
 for the real values configured in the local untracked `.env`; matches are masked and values are
-never printed.
+never printed. Note that the guard only reads text files — it does not OCR screenshots or
+inspect `.pbix` binaries, so review images manually before committing them.
 
 ## Reporting a vulnerability
 

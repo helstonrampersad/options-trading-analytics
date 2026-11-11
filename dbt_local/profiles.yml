@@ -1,4 +1,4 @@
-gauntlet_local:
+options_local:
   target: dev
   outputs:
     dev:

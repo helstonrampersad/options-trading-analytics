@@ -1,7 +1,7 @@
-name: "gauntlet"
+name: "options_analytics"
 version: "1.0"
 config-version: 2
-profile: "gauntlet"
+profile: "options_analytics"
 
 model-paths: ["models"]
 test-paths: ["tests"]
@@ -12,7 +12,7 @@ clean-targets:
   - "dbt_packages"
 
 models:
-  gauntlet:
+  options_analytics:
     staging:
       +materialized: view
       +schema: staging

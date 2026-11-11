@@ -10,7 +10,7 @@ Two DAGs schedule the existing pipelines. Nothing under `airflow/` modifies pipe
 Both run weekdays at 18:00 (`0 18 * * 1-5`) with `catchup=False`,
 `max_active_runs=1`, and 2 retries 5 minutes apart. Each task runs in the repo
 root (default the repository root derived from `Path(__file__).resolve().parents[2]`,
-override with `GAUNTLET_REPO`).
+override with `OPTIONS_REPO`).
 
 Pinned to Airflow 3.3.1, which supports Python 3.10. The classic 2-style imports
 used by these DAGs (`from airflow import DAG`,
@@ -47,4 +47,4 @@ needs no credentials and `DUCKDB_PATH` is set by the DAG itself.
 DAG files run on a scheduler, workers (Celery or Kubernetes executor), a Postgres
 metadata database, and a DAG processor. Managed services such as MWAA, Astronomer,
 or Cloud Composer deploy this exact `dags/` folder unchanged; only the runtime,
-`GAUNTLET_REPO`, and credentials differ.
+`OPTIONS_REPO`, and credentials differ.

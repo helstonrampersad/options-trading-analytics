@@ -1,4 +1,4 @@
-gauntlet:
+options_analytics:
   target: dev
   outputs:
     dev:

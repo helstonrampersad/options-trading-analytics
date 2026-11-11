@@ -1,4 +1,4 @@
-gauntlet_databricks:
+options_databricks:
   target: dev
   outputs:
     dev:

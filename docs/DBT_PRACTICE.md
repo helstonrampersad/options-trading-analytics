@@ -2,8 +2,8 @@
 
 Hands-on labs for learning dbt on your own data. Everything runs from a **WSL2 Ubuntu terminal** in the repo root (native Windows lacks the toolchain).
 
-Repo root: `~/path/to/options-trading-analytics` — on WSL that is typically
-`cd /mnt/c/Users/<you>/Downloads/openCode/options-trading-analytics`.
+Repo root: `~/path/to/options-trading-analytics` — clone it wherever you keep code; the
+commands below assume you are in the repo root.
 
 ## One-time terminal setup
 
@@ -57,7 +57,7 @@ See the SQL dbt *actually* sent to the database (Jinja resolved):
 
 ```bash
 dbt-local compile --select stg_fidelity_trades
-# open: dbt_local/target/compiled/gauntlet_local/models/staging/stg_fidelity_trades.sql
+# open: dbt_local/target/compiled/options_local/models/staging/stg_fidelity_trades.sql
 ```
 
 ## Lab 3 — Run tests, see output, break one on purpose

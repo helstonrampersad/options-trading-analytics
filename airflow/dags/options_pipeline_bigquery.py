@@ -10,7 +10,7 @@ from airflow import DAG
 from airflow.operators.bash import BashOperator
 
 REPO = os.environ.get(
-    "GAUNTLET_REPO",
+    "OPTIONS_REPO",
     str(Path(__file__).resolve().parents[2]),
 )
 
@@ -31,7 +31,7 @@ Loads Fidelity trade CSVs and builds the BigQuery analytics models:
 - A `.env` file at the repo root provides `GCP_PROJECT_ID`, `GCP_REGION`,
   `GCP_RAW_DATASET`, `GCP_ANALYTICS_DATASET`, and the `ACCOUNT_*` / `FILE_*`
   anonymization mappings.
-- The repo location defaults to `GAUNTLET_REPO` and can be overridden with that
+- The repo location defaults to `OPTIONS_REPO` and can be overridden with that
   environment variable.
 """
 

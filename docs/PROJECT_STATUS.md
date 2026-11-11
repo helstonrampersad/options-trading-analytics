@@ -119,8 +119,8 @@ is future work; the repo does not claim scheduled runs.
    refresh the committed screenshots.
 2. `dbt docs generate` and link a lineage screenshot from the README.
 3. Deploy the Airflow DAGs to a scheduler, or schedule the Databricks notebook with Databricks Workflows.
-4. Optional differentiator: MCP server + data-health watchdog + agent skill (see `docs/MCP_AGENT_LAYER.md`,
-   parked until the release and applications are done).
+4. Optional differentiator: MCP server + data-health watchdog (parked until the release and
+   applications are done).
 
 ## Resume bullets (defensible as written)
 

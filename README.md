@@ -239,8 +239,7 @@ docs/              Design decisions, runbook, status, curriculum
 `docs/DECISIONS.md` explains the non-obvious choices in interview-ready form: anonymization
 (D1), content-hash identity (D2), insert-only raw vs merge marts (D3–D4), the same design
 across engines (D5), reconciliation tests (D6), `net_pnl` vs `net_cash_flow` (D7), and Power BI
-(D8). More docs: `docs/USAGE.md`, `docs/PROJECT_STATUS.md`, `docs/DBT_PRACTICE.md`,
-`docs/MCP_AGENT_LAYER.md` (parked future work).
+(D8). More docs: `docs/USAGE.md`, `docs/PROJECT_STATUS.md`, `docs/DBT_PRACTICE.md`.
 
 ## Notes from the build
 

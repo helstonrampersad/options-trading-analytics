@@ -22,6 +22,7 @@ SKIP_DIRS = {
 
 PATTERNS = [
     ("real Fidelity export filename", re.compile(r"History_for_Account_[0-9A-Z]+")),
+    ("account mapping key", re.compile(r"ACCOUNT_([A-Za-z0-9_-]{4,})")),
     ("Databricks access token", re.compile(r"dapi[0-9a-f]{32,}")),
     ("Google API key", re.compile(r"AIza[0-9A-Za-z_-]{30,}")),
     ("private key block", re.compile(r"-----BEGIN [A-Z ]*PRIVATE KEY")),
@@ -33,17 +34,36 @@ PATTERNS = [
     ("gcloud config path", re.compile(r"\.config/gcloud")),
 ]
 
-# Documented fake account tokens used by unit tests; otherwise the scanner would
-# flag its own synthetic fixtures. Real broker exports never look like these.
-PLACEHOLDER_ACCOUNTS = {"Z90000000", "Z90000001", "ZZ00000", "ZZ99999", "LLC", "INDIVIDUAL", "REDACTED"}
+# The ONLY account tokens allowed to appear in the repo: synthetic fixtures plus
+# the label-prefix words produced by sanitize_filename (LLC/INDIVIDUAL). This list
+# is deliberately explicit - no pattern/prefix rules that could accidentally
+# whitelist a real broker account number.
+PLACEHOLDER_ACCOUNTS = {
+    "Z90000000",
+    "Z90000001",
+    "900000001",
+    "900000002",
+    "ZZ00000",
+    "ZZ99999",
+    "LLC",
+    "INDIVIDUAL",
+    "REDACTED",
+}
+# `.env.example` may document placeholder keys with this prefix.
+EXAMPLE_ACCOUNT_PREFIX = "EXAMPLE"
 ENV_KEYS = {"GCP_PROJECT_ID", "DATABRICKS_HOST", "DATABRICKS_TOKEN"}
 MAX_BYTES = 5_000_000
 
 
 def is_placeholder(text: str) -> bool:
-    """True for synthetic account tokens used in tests (e.g. Z90000000)."""
+    """True only for the explicit synthetic account tokens above."""
     token = text.rsplit("_", 1)[-1]
-    return token in PLACEHOLDER_ACCOUNTS or (token.startswith("Z") and set(token[1:]) == {"0"})
+    return token in PLACEHOLDER_ACCOUNTS
+
+
+def is_allowed_mapping_key(suffix: str) -> bool:
+    """True for documented synthetic test keys and `.env.example` placeholders."""
+    return suffix in PLACEHOLDER_ACCOUNTS or suffix.startswith(EXAMPLE_ACCOUNT_PREFIX)
 
 
 def mask(text: str) -> str:
@@ -111,13 +131,20 @@ def main(argv=None) -> int:
                 for match in pattern.finditer(line):
                     if label.startswith("real Fidelity") and is_placeholder(match.group()):
                         continue
+                    if label == "account mapping key":
+                        suffix = match.group(1)
+                        if is_allowed_mapping_key(suffix):
+                            continue
+                        # Never echo account digits, not even partially.
+                        hits.append(f"{rel}:{lineno}: account mapping key (masked)")
+                        continue
                     hits.append(f"{rel}:{lineno}: {label}: {mask(match.group())}")
             for key, value in env_values.items():
                 if value not in line:
                     continue
                 if rel.name == ".env.example" and line.lstrip().startswith("ACCOUNT_"):
                     suffix = line.split("=", 1)[0].strip()[len("ACCOUNT_"):]
-                    if suffix in PLACEHOLDER_ACCOUNTS:
+                    if is_allowed_mapping_key(suffix):
                         continue  # documented placeholder mapping, not a real account number
                 # Never echo the key for ACCOUNT_*: its suffix IS the real account number.
                 label = "ACCOUNT_***" if key.startswith("ACCOUNT_") else key

@@ -10,7 +10,7 @@ from airflow import DAG
 from airflow.operators.bash import BashOperator
 
 REPO = os.environ.get(
-    "GAUNTLET_REPO",
+    "OPTIONS_REPO",
     str(Path(__file__).resolve().parents[2]),
 )
 DUCKDB_PATH = os.path.join(REPO, "data", "local.duckdb")
@@ -35,7 +35,7 @@ Runs the same options pipeline without any cloud dependencies:
 
 - `dbt` must be on `PATH` (the tasks pass `PATH` through).
 - `DUCKDB_PATH` is set to `<repo>/data/local.duckdb` for the dbt tasks.
-- The repo location defaults to `GAUNTLET_REPO` and can be overridden with that
+- The repo location defaults to `OPTIONS_REPO` and can be overridden with that
   environment variable.
 """
 
