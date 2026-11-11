@@ -1,22 +1,26 @@
 # Options Trading Analytics Pipeline
 
-End-to-end analytics over Fidelity options-trade CSV exports: Python ingest with account
-anonymization and content-hash deduplication, dbt staging and incremental marts, Airflow
-orchestration, and a Power BI layer — the same medallion design implemented four ways across
-three engines (BigQuery, DuckDB, Databricks).
+I trade options — mostly cash-secured puts, covered calls and a small wheel sleeve — and Fidelity
+only gives me CSV exports. This repo is the pipeline I built to turn those exports into something
+queryable: a header-sniffing Python ingest step, dbt staging and incremental marts, Airflow DAGs
+for scheduling, and a Power BI dashboard on top.
+
+The same medallion design is implemented four ways across three engines (BigQuery, DuckDB,
+Databricks) so the tradeoffs are concrete rather than theoretical.
 
 ![CI](https://github.com/helstonrampersad/options-trading-analytics/actions/workflows/ci.yml/badge.svg)
 ![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
 ![Python 3.11](https://img.shields.io/badge/Python-3.11-blue)
 
-**At a glance:** 4 implementations across 3 engines (BigQuery · DuckDB · Databricks) ·
-35 pytest + 28 dbt tests including P&L reconciliation · one-command synthetic demo ·
-Power BI dashboard · credential-free GitHub Actions CI.
+**What's in here:** four implementations across three engines (BigQuery · DuckDB · Databricks) ·
+35 pytest + 28 dbt tests including P&L reconciliation · a one-command synthetic demo · a
+three-page Power BI report · CI that runs without cloud credentials.
 
 > **No private data in this repository.** Committed data is limited to a synthetic fixture
 > (`tests/fixtures/sample_history.csv`) and synthetic Power BI samples under
 > `powerbi/sample_data/`. Real exports live outside the repo and are gitignored; account
-> numbers are mapped to labels in an untracked `.env` before any row is built.
+> numbers are mapped to labels in an untracked `.env` before any row is built. Early planning
+> notes that contained account-number examples were removed from the repo and its history.
 
 **Status:** v1.0 tagged and CI green on every push. The local pipeline is verified end to end
 (35 pytest + 28 dbt tests); the cloud paths run with the owner's credentials.
@@ -38,11 +42,10 @@ gitignored; these screenshots are public-safe.*
 
 ## Why this project
 
-A personal portfolio project built on real trading data that cannot be published — and that
-constraint is the point: it shows production-style data engineering around private data
-(anonymize before ingestion, idempotent loads, reconciliation tests, portability across
-engines). The scope is deliberately focused on one well-tested domain rather than breadth for
-its own sake.
+The data is real but private, which turned out to be a useful constraint: anonymize before
+ingestion, make loads idempotent, prove the P&L math with reconciliation tests, and keep the
+same models portable across engines. I kept the scope to one domain — options trading — rather
+than adding breadth for its own sake.
 
 ## Architecture
 
@@ -228,7 +231,7 @@ powerbi/           Power BI assets: export script, DAX, theme, data dictionary, 
 scripts/           Pre-push privacy check (account numbers / secret shapes)
 tests/             pytest suite + synthetic fixture (the only committed CSV data)
 data/              Local DuckDB databases and raw export drop folder (gitignored)
-docs/              Design decisions, runbook, status, curriculum, historical plans
+docs/              Design decisions, runbook, status, curriculum
 ```
 
 ## Design decisions
@@ -237,7 +240,22 @@ docs/              Design decisions, runbook, status, curriculum, historical pla
 (D1), content-hash identity (D2), insert-only raw vs merge marts (D3–D4), the same design
 across engines (D5), reconciliation tests (D6), `net_pnl` vs `net_cash_flow` (D7), and Power BI
 (D8). More docs: `docs/USAGE.md`, `docs/PROJECT_STATUS.md`, `docs/DBT_PRACTICE.md`,
-`docs/superpowers/` (historical plans), `docs/MCP_AGENT_LAYER.md` (parked future work).
+`docs/MCP_AGENT_LAYER.md` (parked future work).
+
+## Notes from the build
+
+A few things that bit me, kept here because they don't show up on the architecture diagram:
+
+- Fidelity's export shape drifts by year — 13 columns now, 17 in the 2023–2025 files, and one
+  file uses CR-only line endings. The ingest sniffs the header row instead of assuming a schema.
+- DuckDB is single-writer. One DBeaver tab with the database open is enough to make
+  `./run.sh daily` fail with a lock error.
+- The 3-day lookback on the incremental marts means back-filling older CSVs needs
+  `./run.sh full`.
+- The Airflow and Databricks code is real but doesn't run on a scheduler in this repo —
+  deploying it is a deliberate next step, not something I'll pretend is live.
+- The Power BI build I used doesn't expose theme import through the View tab, so the dashboard is
+  default-styled with manual layout rather than using the navy/teal theme in `powerbi/theme.json`.
 
 ## Roadmap
 

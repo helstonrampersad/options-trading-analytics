@@ -87,3 +87,4 @@ airflow/.venv/
 *.log
 .~*
 *.tmp
+AGENTS.local.md

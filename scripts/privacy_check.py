@@ -116,7 +116,9 @@ def main(argv=None) -> int:
                 if value not in line:
                     continue
                 if rel.name == ".env.example" and line.lstrip().startswith("ACCOUNT_"):
-                    continue  # documented placeholder mappings, not real values
+                    suffix = line.split("=", 1)[0].strip()[len("ACCOUNT_"):]
+                    if suffix in PLACEHOLDER_ACCOUNTS:
+                        continue  # documented placeholder mapping, not a real account number
                 # Never echo the key for ACCOUNT_*: its suffix IS the real account number.
                 label = "ACCOUNT_***" if key.startswith("ACCOUNT_") else key
                 hits.append(f"{rel}:{lineno}: real {label} value (masked)")
