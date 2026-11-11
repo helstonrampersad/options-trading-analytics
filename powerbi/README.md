@@ -164,10 +164,12 @@ wide, and save these files:
 
 | File | Shot |
 |---|---|
-| `screenshots/01-wheel-overview.png` | Page 1 full canvas (KPI cards, monthly trend, strategy bar, account slicer) |
-| `screenshots/02-csp-covered-calls.png` | Page 2 (put/call lifecycle, P&L by ticker, activity donut) |
-| `screenshots/03-data-quality.png` | Page 3 (freshness, row counts, source mix) |
-| `screenshots/04-model-view.png` | Model view showing the fact tables and `DimAccount` relationships |
+| `screenshots/01-wheel-overview.png` | Page 1 — Wheel Overview (KPI cards, monthly trend, strategy bar, account slicer, ticker/strategy table) |
+| `screenshots/02-csp-covered-calls.png` | Page 2 — CSPs & Covered Calls (assignment/expiry/premium KPIs, premium by ticker, activity donut, lifecycle table) |
+| `screenshots/03-data-quality-ops.png` | Page 3 — Data Quality & Ops (cash flow / DTE cards, trades by source, source/account/ticker detail) |
+
+The repo currently ships captures 01–03, generated from the report built over
+`sample_data/dashboard_synthetic.csv`. Re-capture them if you rebuild the report.
 
 `loadData` / `save` guidance: the folder is tracked (`.gitkeep`) so the images can be added
 straight to the repo; then link them from the top of the root `README.md` as an image gallery.

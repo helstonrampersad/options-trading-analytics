@@ -35,12 +35,14 @@ personal absolute paths. The only committed data is the synthetic fixture
   end-to-end DuckDB run on the committed synthetic fixture, credential-free `dbt parse` for the
   cloud projects). The first GitHub Actions run (2026-11-09, run `42725377720`) completed
   **success**, and subsequent pushes are green as well.
-- **Power BI:** a working one-page dashboard was built in Power BI Desktop from the synthetic
-  sample (`powerbi/OptionsTrading.pbix`, gitignored locally) and committed as a public-safe
-  screenshot (`powerbi/screenshots/01-wheel-overview.png`): KPI cards, monthly P&L trend, P&L by
-  strategy, an account slicer and a ticker/strategy table. The committed assets also include the
-  combined dataset builder, DAX measures, theme, data dictionary and the three-page build spec
-  for extending it; pages 2–3 are not built yet.
+- **Power BI:** a working **three-page dashboard** was built in Power BI Desktop from the synthetic
+  sample (`powerbi/OptionsTrading.pbix`, gitignored locally) and committed as public-safe
+  screenshots under `powerbi/screenshots/` (01-wheel-overview, 02-csp-covered-calls,
+  03-data-quality-ops). Pages: Wheel Overview (KPI cards, monthly P&L trend, P&L by strategy,
+  account slicer, ticker/strategy table); CSPs & Covered Calls (assignments/expiries/premium KPIs,
+  premium by ticker, activity mix by source, lifecycle by account); Data Quality & Ops (net cash
+  flow, average DTE, trades by source, source/account/ticker detail). The committed assets also
+  include the combined dataset builder, DAX measures, theme, data dictionary and build spec.
 - **Orchestration:** Airflow DAGs and a Databricks Workflows path are authored; neither runs on a
   scheduler in this repo — that is a deployment step, not a claim.
 
@@ -101,10 +103,10 @@ is future work; the repo does not claim scheduled runs.
 
 ## Known gaps / honest caveats
 
-- CI is green and the tree is pushed; the next polish step is building pages 2–3 of the Power BI
-  report (`powerbi/dashboard-spec.md` has the full spec).
-- A Power BI report can be built locally from the committed dataset, measures and spec; the
-  `.pbix` is intentionally not committed.
+- CI is green and the tree is pushed. The three-page Power BI report is built and screenshotted;
+  remaining work is cosmetic (custom theme, DAX measures for friendlier labels, report header).
+- The `.pbix` is intentionally not committed (kept locally at `powerbi/OptionsTrading.pbix`);
+  the committed screenshots use synthetic data only.
 - BigQuery and Databricks runs depend on owner credentials and were not exercised in the
   release-prep verification above.
 - The four implementations share a design, not a runtime; keeping them in sync is manual.
@@ -113,8 +115,8 @@ is future work; the repo does not claim scheduled runs.
 
 ## Roadmap
 
-1. Extend the Power BI report to pages 2–3 (CSP/covered-call lifecycle and data-quality pages)
-   and refresh the README screenshot.
+1. Polish the Power BI report — custom theme/DAX measures for nicer titles, a report header, and
+   refresh the committed screenshots.
 2. `dbt docs generate` and link a lineage screenshot from the README.
 3. Deploy the Airflow DAGs to a scheduler, or schedule the Databricks notebook with Databricks Workflows.
 4. Optional differentiator: MCP server + data-health watchdog + agent skill (see `docs/MCP_AGENT_LAYER.md`,
@@ -129,5 +131,5 @@ is future work; the repo does not claim scheduled runs.
   and Databricks; PySpark/Delta notebook), with 35 pytest tests and 28 dbt tests per project
   including singular P&L reconciliation tests, and credential-free CI on a synthetic fixture.
 - Authored Airflow DAGs for local and BigQuery pipelines, a PySpark/Delta Databricks notebook,
-  and Power BI report assets over the marts; documented architecture, privacy design, design
-  trade-offs, and operational runbooks in-repo.
+  and a three-page Power BI dashboard over the marts (screenshots committed); documented
+  architecture, privacy design, design trade-offs, and operational runbooks in-repo.
