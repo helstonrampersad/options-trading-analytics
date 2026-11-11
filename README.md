@@ -11,7 +11,7 @@ three engines (BigQuery, DuckDB, Databricks).
 
 **At a glance:** 4 implementations across 3 engines (BigQuery · DuckDB · Databricks) ·
 35 pytest + 28 dbt tests including P&L reconciliation · one-command synthetic demo ·
-credential-free GitHub Actions CI.
+Power BI dashboard · credential-free GitHub Actions CI.
 
 > **No private data in this repository.** Committed data is limited to a synthetic fixture
 > (`tests/fixtures/sample_history.csv`) and synthetic Power BI samples under
@@ -20,6 +20,12 @@ credential-free GitHub Actions CI.
 
 **Status:** v1.0 tagged and CI green on every push. The local pipeline is verified end to end
 (35 pytest + 28 dbt tests); the cloud paths run with the owner's credentials.
+
+![Wheel Overview dashboard](powerbi/screenshots/01-wheel-overview.png)
+
+*Power BI dashboard built from the committed synthetic sample data — KPI cards, monthly P&L
+trend, P&L by strategy, account slicer, and a ticker/strategy detail table. The report itself
+(`powerbi/OptionsTrading.pbix`) is kept local and gitignored; this screenshot is public-safe.*
 
 ## Why this project
 
@@ -160,19 +166,20 @@ Both target Databricks Free Edition; CI runs only a credential-free `dbt parse` 
 
 ## Power BI
 
-A **Power BI layer** ships in `powerbi/`: an import-ready combined dataset builder
-(`build_dashboard_dataset.py`), DAX measures, a report theme, a data dictionary, synthetic
-sample data, and a page-by-page build spec.
+A working **Power BI dashboard** is included in `powerbi/`, built on the committed synthetic
+sample data so it can be shown publicly (see the screenshot at the top of this README). It
+uses the combined dataset from `build_dashboard_dataset.py`: KPI cards, a monthly P&L trend,
+P&L by strategy, an account slicer, and a ticker/strategy detail table.
 
 ```bash
 make powerbi        # or: ./run.sh powerbi
 # -> data/exports/powerbi/dashboard.csv  (single-table import; gitignored)
 ```
 
-Import that one CSV in Power BI Desktop (**Get Data → Text/CSV**), add the measures from
-`powerbi/measures.dax`, and follow `powerbi/dashboard-spec.md`. The committed
-`powerbi/sample_data/dashboard_synthetic.csv` lets anyone build the report without private
-trades; the `.pbix` stays local and gitignored.
+The report is `powerbi/OptionsTrading.pbix` (kept local, gitignored). To rebuild or extend it —
+including the full three-page spec for CSP/covered-call lifecycle and data-quality pages — follow
+`powerbi/dashboard-spec.md`; DAX measures, the report theme, and the data dictionary live in the
+same folder.
 
 ## Testing and CI
 
@@ -220,7 +227,8 @@ across engines (D5), reconciliation tests (D6), `net_pnl` vs `net_cash_flow` (D7
 
 ## Roadmap
 
-- Add dashboard screenshots and a short demo walkthrough to the README.
+- Extend the Power BI report to the full three-page spec (CSP/covered-call lifecycle and
+  data-quality pages) and refresh the screenshots.
 - Generate `dbt docs` and link a lineage screenshot.
 - Deploy the Airflow DAGs to a scheduler (or schedule the notebook via Databricks Workflows).
 

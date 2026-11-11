@@ -35,10 +35,12 @@ personal absolute paths. The only committed data is the synthetic fixture
   end-to-end DuckDB run on the committed synthetic fixture, credential-free `dbt parse` for the
   cloud projects). The first GitHub Actions run (2026-11-09, run `42725377720`) completed
   **success**, and subsequent pushes are green as well.
-- **Power BI:** import-ready assets are committed — a single combined dataset builder
-  (`powerbi/build_dashboard_dataset.py`), DAX measures, theme, data dictionary, synthetic sample
-  data, and a page-by-page build spec. The `.pbix` report is built locally in Power BI Desktop
-  and is gitignored; screenshots go under `powerbi/screenshots/`.
+- **Power BI:** a working one-page dashboard was built in Power BI Desktop from the synthetic
+  sample (`powerbi/OptionsTrading.pbix`, gitignored locally) and committed as a public-safe
+  screenshot (`powerbi/screenshots/01-wheel-overview.png`): KPI cards, monthly P&L trend, P&L by
+  strategy, an account slicer and a ticker/strategy table. The committed assets also include the
+  combined dataset builder, DAX measures, theme, data dictionary and the three-page build spec
+  for extending it; pages 2–3 are not built yet.
 - **Orchestration:** Airflow DAGs and a Databricks Workflows path are authored; neither runs on a
   scheduler in this repo — that is a deployment step, not a claim.
 
@@ -99,7 +101,8 @@ is future work; the repo does not claim scheduled runs.
 
 ## Known gaps / honest caveats
 
-- CI is green and the tree is pushed; the next polish step is committing dashboard screenshots.
+- CI is green and the tree is pushed; the next polish step is building pages 2–3 of the Power BI
+  report (`powerbi/dashboard-spec.md` has the full spec).
 - A Power BI report can be built locally from the committed dataset, measures and spec; the
   `.pbix` is intentionally not committed.
 - BigQuery and Databricks runs depend on owner credentials and were not exercised in the
@@ -110,7 +113,8 @@ is future work; the repo does not claim scheduled runs.
 
 ## Roadmap
 
-1. Add Power BI dashboard screenshots to the README (`powerbi/screenshots/`).
+1. Extend the Power BI report to pages 2–3 (CSP/covered-call lifecycle and data-quality pages)
+   and refresh the README screenshot.
 2. `dbt docs generate` and link a lineage screenshot from the README.
 3. Deploy the Airflow DAGs to a scheduler, or schedule the Databricks notebook with Databricks Workflows.
 4. Optional differentiator: MCP server + data-health watchdog + agent skill (see `docs/MCP_AGENT_LAYER.md`,
